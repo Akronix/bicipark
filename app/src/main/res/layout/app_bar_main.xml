@@ -20,7 +20,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/activity_browsing" />
+    <include layout="@layout/map_fragment" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_directMe"
