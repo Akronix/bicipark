@@ -20,6 +20,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -35,11 +37,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.kml.KmlLayer;
 
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -47,6 +53,10 @@ public class MainActivity extends AppCompatActivity
 
     /*** Main members ***/
     private GoogleMap mMap;
+    private KmlLayer mKmlLayer;
+
+    /*** View members ***/
+    MenuItem favActionButton;
 
 
     /*** Location members: ***/
@@ -73,6 +83,7 @@ public class MainActivity extends AppCompatActivity
 
     /*** Other members ***/
     public static final String LOG_TAG = "BICIPARK";
+    private int mSelectedParkingId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +133,7 @@ public class MainActivity extends AppCompatActivity
 
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
     }
 
     private void initLocationCallback() {
@@ -323,19 +335,44 @@ public class MainActivity extends AppCompatActivity
         }
 
         try {
-            KmlLayer kmlLayer = new KmlLayer(mMap, R.raw.upstream, getApplicationContext());
-            kmlLayer.addLayerToMap();
+            mKmlLayer = new KmlLayer(mMap, R.raw.upstream, getApplicationContext());
+            mKmlLayer.addLayerToMap();
         } catch (XmlPullParserException e) {
             e.printStackTrace();
+            return;
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
+        // Set a listener for geometry clicked events.
+        mKmlLayer.setOnFeatureClickListener(new KmlLayer.OnFeatureClickListener() {
+            @Override
+            public void onFeatureClick(Feature feature) {
+                mSelectedParkingId = Integer.parseInt(feature.getProperty("name"));
+                showFavButton();
+                Log.i("KmlClick", "Feature clicked: " + feature.getProperty("name"));
+            }
+        });
 
-        // Add a marker in Sydney and move the camera
-        /*LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng point) {
+                mSelectedParkingId = 0;
+                hideFavButton();
+            }
+        });
+
     }
+
+    private void hideFavButton() {
+        favActionButton.setVisible(false);
+    }
+
+
+    private void showFavButton() {
+        favActionButton.setVisible(true);
+    }
+
 
     protected void initLocationRequest() {
         mLocationRequest = LocationRequest.create()
@@ -362,6 +399,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        favActionButton = menu.findItem(R.id.action_fav);
         return true;
     }
 
@@ -373,11 +411,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_fav) {
+            toggleFav(mSelectedParkingId);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void toggleFav(int mSelectedParkingId) {
+        Toast.makeText(this, String.format("Save parking %d as favourite", mSelectedParkingId), Toast.LENGTH_SHORT).show();
+        favActionButton.setIcon(android.R.drawable.btn_star_big_on);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
