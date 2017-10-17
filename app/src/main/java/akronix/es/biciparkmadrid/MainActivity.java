@@ -23,7 +23,6 @@ import android.view.MenuItem;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -33,10 +32,14 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.maps.android.data.kml.KmlLayer;
+
+import org.xmlpull.v1.XmlPullParserException;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -57,7 +60,7 @@ public class MainActivity extends AppCompatActivity
     // A default location (Puerta del Sol, Madrid, Spain) and default zoom to use when location permission is
     // not granted.
     private final LatLng mDefaultLocation = new LatLng(40.416932, -3.703317);
-    private static final int DEFAULT_ZOOM = 18;
+    private static final int DEFAULT_ZOOM = 17;
     private boolean mRequestingLocationUpdates = true;
 
     /*** Location updates ***/
@@ -248,7 +251,8 @@ public class MainActivity extends AppCompatActivity
                 //mMap.getUiSettings().setMyLocationButtonEnabled(false);
             }
         } catch (SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
+            Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
+            //Log.e("Exception: %s", e.getMessage());
         }
     }
 
@@ -271,7 +275,7 @@ public class MainActivity extends AppCompatActivity
                                     mLastKnownLocation.getLongitude()));
                         } else {
                             Log.d(LOG_TAG, "Current location is null. Using defaults.");
-                            Log.e(LOG_TAG, "Exception: %s", task.getException());
+                            //Log.e(LOG_TAG, String.format("Exception: %s", task.getException()));
                             centerCameraOnLocation(mDefaultLocation);
                             //mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
@@ -281,7 +285,8 @@ public class MainActivity extends AppCompatActivity
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
             }
         } catch(SecurityException e)  {
-            Log.e("Exception: %s", e.getMessage());
+            //Log.e("Exception: %s", e.getMessage());
+            Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
         }
     }
 
@@ -315,6 +320,15 @@ public class MainActivity extends AppCompatActivity
 
         if (!mMap.isMyLocationEnabled()) {
             Log.d(LOG_TAG, "Location layer is disabled :(");
+        }
+
+        try {
+            KmlLayer kmlLayer = new KmlLayer(mMap, R.raw.upstream, getApplicationContext());
+            kmlLayer.addLayerToMap();
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         // Add a marker in Sydney and move the camera
