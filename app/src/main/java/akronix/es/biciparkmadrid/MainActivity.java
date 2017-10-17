@@ -126,7 +126,9 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
-                    getDeviceLocation();
+                    mLastKnownLocation = location;
+                    centerCameraOnLocation(new LatLng(mLastKnownLocation.getLatitude(),
+                            mLastKnownLocation.getLongitude()));
                     updateLocationUI();
                 }
             }
@@ -265,13 +267,12 @@ public class MainActivity extends AppCompatActivity
                         if (task.isSuccessful() && task.getResult() != null) {
                             // Set the map's camera position to the current location of the device.
                             mLastKnownLocation = (Location) task.getResult();
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                    new LatLng(mLastKnownLocation.getLatitude(),
-                                            mLastKnownLocation.getLongitude()), DEFAULT_ZOOM));
+                            centerCameraOnLocation(new LatLng(mLastKnownLocation.getLatitude(),
+                                    mLastKnownLocation.getLongitude()));
                         } else {
                             Log.d(LOG_TAG, "Current location is null. Using defaults.");
                             Log.e(LOG_TAG, "Exception: %s", task.getException());
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+                            centerCameraOnLocation(mDefaultLocation);
                             //mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
