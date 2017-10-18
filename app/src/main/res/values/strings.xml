@@ -15,8 +15,8 @@
     <string name="title_activity_help">Help &amp; Feedback</string>
     <string name="dialog_select_action">Select action</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="rename">rename</string>
     <string name="cancel">cancel</string>
+    <string name="title_activity_banner">BannerActivity</string>
+    <string name="intent_share_chooser">Share using</string>
 </resources>

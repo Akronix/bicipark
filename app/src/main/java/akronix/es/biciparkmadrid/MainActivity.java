@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -46,7 +47,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -474,11 +474,36 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_favourites) {
             Intent intent = new Intent(this, ListFavouritesActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_banner) {
+            Intent intent = new Intent(this, BannerActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
+            if (mLastKnownLocation != null) {
+                Log.i(LOG_TAG, "Location " + mLastKnownLocation.toString());
+
+
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "My Location");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, String.format("This is my location: %s,%s",
+                        mLastKnownLocation.getLatitude(),
+                        mLastKnownLocation.getLongitude()));
+                startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.intent_share_chooser)));
+
+                /*
+                Intent locationIntent = new Intent(Intent.ACTION_VIEW);
+                locationIntent.setData(Uri.parse(String.format("geo: %s,%s",
+                        mLastKnownLocation.getLatitude(),
+                        mLastKnownLocation.getLongitude())));
+                startActivity(locationIntent);
+                */
+
+            } else {
+                Toast.makeText(this, "Unable to get any location to share", Toast.LENGTH_SHORT).show();
+            }
+
 
         } else if (id == R.id.nav_help) {
             Intent intent = new Intent(this, HelpActivity.class);

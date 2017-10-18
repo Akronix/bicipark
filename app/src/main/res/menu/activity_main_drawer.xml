@@ -11,9 +11,9 @@
             android:icon="@android:drawable/star_big_on"
             android:title="@string/menu_favourites" />
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_banner"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+            android:title="Banner" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
@@ -25,7 +25,7 @@
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="Share my location" />
             <item
                 android:id="@+id/nav_help"
                 android:icon="@android:drawable/ic_menu_help"
