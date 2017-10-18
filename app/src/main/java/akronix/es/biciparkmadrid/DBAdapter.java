@@ -2,6 +2,7 @@ package akronix.es.biciparkmadrid;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.ContentObservable;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.util.SortedList;
@@ -16,7 +17,7 @@ import java.util.TreeSet;
  * Created by cice on 18/10/17.
  */
 
-public final class DBAdapter {
+public final class DBAdapter extends ContentObservable{
 
     private DBHelper mDBHelper;
     private SQLiteDatabase db;
@@ -40,16 +41,24 @@ public final class DBAdapter {
                 DBHelper.FAVOURITES_TABLE_NAME,
                 null,
                 cv);
-
-
-        return (ret != -1); // -1 means no row inserted
+        if (ret != -1) { // -1 means no row inserted
+            this.dispatchChange(true, null);
+            return true;
+        } else {
+            return false; // 0 means no row affected
+        }
     }
 
     public boolean deletebyId (long id) {
         db = mDBHelper.getWritableDatabase();
         String[] args = {String.valueOf(id)};
         int ret = db.delete(DBHelper.FAVOURITES_TABLE_NAME, "_id = ?", args);
-        return (ret != 0); // 0 means no row affected
+        if (ret != 0) {
+            this.dispatchChange(true, null);
+            return true;
+        } else {
+            return false; // 0 means no row affected
+        }
     }
 
     public boolean deleteByParkingId (long parkingId) {
@@ -57,7 +66,12 @@ public final class DBAdapter {
         String[] args = {String.valueOf(parkingId)};
         String whereClause = String.format(" %s =  ?", DBHelper.FAVOURITES_COLUMN_NAMES.parking_id);
         int ret = db.delete(DBHelper.FAVOURITES_TABLE_NAME, whereClause, args);
-        return (ret != 0); // 0 means no row affected
+        if (ret != 0) {
+            this.dispatchChange(true, null);
+            return true;
+        } else {
+            return false; // 0 means no row affected
+        }
     }
 
     public Cursor getLocalFavouritedParkingsCursor() {
@@ -72,7 +86,7 @@ public final class DBAdapter {
         Cursor c = this.getLocalFavouritedParkingsCursor();
         Set parkings = new HashSet(c.getCount());
         while (c.moveToNext()){
-            parkings.add(c.getLong(DBHelper.FAVOURITES_COLUMN_NAMES._id.ordinal()));
+            parkings.add(c.getLong(c.getColumnIndex(DBHelper.FAVOURITES_COLUMN_NAMES.parking_id.toString())));
         }
         return parkings;
 

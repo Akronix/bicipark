@@ -4,9 +4,11 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.ContentObserver;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -84,7 +86,6 @@ public class MainActivity extends AppCompatActivity
 
     /*** Other members ***/
     public static final String LOG_TAG = "BICIPARK";
-    //TODO Make it ContentObserver of favourites database
     private Set<Long> mFavourites;
     private long mSelectedParkingId;
     private DBAdapter mDBAdapter;
@@ -139,7 +140,19 @@ public class MainActivity extends AppCompatActivity
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         mDBAdapter = new DBAdapter(this);
+        initFavouritesCollection();
 
+    }
+
+    private void initFavouritesCollection() {
+        mDBAdapter.registerObserver(new ContentObserver(new Handler()) {
+            @Override
+            public void onChange(boolean selfChange, Uri uri) {
+                mFavourites = mDBAdapter.getLocalFavouritedParkingsIds();
+                for (long id : mFavourites)
+                    Log.d(LOG_TAG, id + ", ");
+            }
+        });
     }
 
 
@@ -150,6 +163,8 @@ public class MainActivity extends AppCompatActivity
             startLocationUpdates();
         }
         mFavourites = mDBAdapter.getLocalFavouritedParkingsIds();
+        for (long id : mFavourites)
+            Log.d(LOG_TAG, id + ", ");
     }
 
     @Override
