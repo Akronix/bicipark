@@ -9,7 +9,15 @@ public class FavouritedParking {
     private long parkingId;
     private String name;
 
-    public FavouritedParking(int parkingId, String name) {
+    public long getParkingId() {
+        return parkingId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public FavouritedParking(long parkingId, String name) {
         this.parkingId = parkingId;
         this.name = name;
     }

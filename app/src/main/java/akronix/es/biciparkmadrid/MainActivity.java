@@ -43,6 +43,9 @@ import com.google.maps.android.data.kml.KmlLayer;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.function.Consumer;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity
     // not granted.
     private final LatLng mDefaultLocation = new LatLng(40.416932, -3.703317);
     private static final int DEFAULT_ZOOM = 17;
-    private boolean mRequestingLocationUpdates = true;
+    private boolean mRequestingLocationUpdates = false;
 
     /*** Location update members ***/
     private static final int UPDATE_INTERVAL = 10 * 1000;
@@ -80,8 +83,9 @@ public class MainActivity extends AppCompatActivity
 
     /*** Other members ***/
     public static final String LOG_TAG = "BICIPARK";
-    private SortedList<Long> mFavourites;
+    private Set<Long> mFavourites;
     private long mSelectedParkingId;
+    private DBAdapter mDBAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +136,52 @@ public class MainActivity extends AppCompatActivity
         // Construct a FusedLocationProviderClient.
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+        mDBAdapter = new DBAdapter(this);
+
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mRequestingLocationUpdates) {
+            startLocationUpdates();
+        }
+        mFavourites = mDBAdapter.getLocalFavouritedParkingsIds();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Disable updates when we are not in the foreground
+        if (mRequestingLocationUpdates)
+            stopLocationUpdates();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDBAdapter.finalize();
+    }
+
+    private void startLocationUpdates() {
+        //getLocationPermission();
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest,
+                    mLocationCallback,
+                    null /* Looper */);
+        }
+    }
+
+    private void stopLocationUpdates() {
+        mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
     }
 
     private void initLocationCallback() {
@@ -148,43 +198,6 @@ public class MainActivity extends AppCompatActivity
 
             ;
         };
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (mRequestingLocationUpdates) {
-            startLocationUpdates();
-        }
-    }
-
-    private void startLocationUpdates() {
-        getLocationPermission();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest,
-                mLocationCallback,
-                null /* Looper */);
-    }
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        //Disable updates when we are not in the foreground
-        stopLocationUpdates();
-    }
-
-    private void stopLocationUpdates() {
-        mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
     }
 
 
@@ -327,6 +340,8 @@ public class MainActivity extends AppCompatActivity
 
         // Get the current location of the device and set the position of the map.
         //getDeviceLocation();
+        mRequestingLocationUpdates = true;
+        startLocationUpdates();
 
         if (!mMap.isMyLocationEnabled()) {
             Log.d(LOG_TAG, "Location layer is disabled :(");
@@ -347,7 +362,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onFeatureClick(Feature feature) {
                 mSelectedParkingId = Long.parseLong(feature.getProperty("name"));
-                showFavButton();
+                showFavButton(mSelectedParkingId);
                 Log.i("KmlClick", "Feature clicked: " + feature.getProperty("name"));
             }
         });
@@ -367,7 +382,12 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void showFavButton() {
+    private void showFavButton(long parkingId) {
+        if (mFavourites.contains(parkingId))
+            favActionButton.setIcon(android.R.drawable.btn_star_big_on);
+        else {
+            favActionButton.setIcon(android.R.drawable.btn_star_big_off);
+        }
         favActionButton.setVisible(true);
     }
 
@@ -418,8 +438,27 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void toggleFav(long mSelectedParkingId) {
-        Toast.makeText(this, String.format("Save parking %d as favourite", mSelectedParkingId), Toast.LENGTH_SHORT).show();
-        favActionButton.setIcon(android.R.drawable.btn_star_big_on);
+        if (mFavourites.contains(mSelectedParkingId)) {
+            if (mDBAdapter.deleteByParkingId(mSelectedParkingId)) {
+                mFavourites.remove(mSelectedParkingId);
+                Toast.makeText(this, String.format("Unmarked parking %d as favourite", mSelectedParkingId), Toast.LENGTH_SHORT).show();
+                favActionButton.setIcon(android.R.drawable.btn_star_big_off);
+            } else {
+                Log.e(LOG_TAG, "Trying to delete parking " + mSelectedParkingId + " from db, but it failed.");
+            }
+
+        } else {
+            FavouritedParking parking = new FavouritedParking(
+                    mSelectedParkingId,
+                    String.valueOf(mSelectedParkingId));
+            if (mDBAdapter.insert(parking)) {
+                mFavourites.add(mSelectedParkingId);
+                Toast.makeText(this, String.format("Marked parking %d as favourite", mSelectedParkingId), Toast.LENGTH_SHORT).show();
+                favActionButton.setIcon(android.R.drawable.btn_star_big_on);
+            } else {
+                Log.e(LOG_TAG, "Trying to delete parking " + mSelectedParkingId + " from db, but it failed.");
+            }
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
