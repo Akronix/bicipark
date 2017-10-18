@@ -10,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.util.SortedList;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,7 +21,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -43,9 +43,6 @@ import com.google.maps.android.data.kml.KmlLayer;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -73,7 +70,7 @@ public class MainActivity extends AppCompatActivity
     private static final int DEFAULT_ZOOM = 17;
     private boolean mRequestingLocationUpdates = true;
 
-    /*** Location updates ***/
+    /*** Location update members ***/
     private static final int UPDATE_INTERVAL = 10 * 1000;
     private static final int FASTEST_UPDATE_INTERVAL = 2 * 1000;
     /* Metadata about updates we want to receive */
@@ -83,7 +80,8 @@ public class MainActivity extends AppCompatActivity
 
     /*** Other members ***/
     public static final String LOG_TAG = "BICIPARK";
-    private int mSelectedParkingId;
+    private SortedList<Long> mFavourites;
+    private long mSelectedParkingId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -348,7 +346,7 @@ public class MainActivity extends AppCompatActivity
         mKmlLayer.setOnFeatureClickListener(new KmlLayer.OnFeatureClickListener() {
             @Override
             public void onFeatureClick(Feature feature) {
-                mSelectedParkingId = Integer.parseInt(feature.getProperty("name"));
+                mSelectedParkingId = Long.parseLong(feature.getProperty("name"));
                 showFavButton();
                 Log.i("KmlClick", "Feature clicked: " + feature.getProperty("name"));
             }
@@ -419,7 +417,7 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void toggleFav(int mSelectedParkingId) {
+    private void toggleFav(long mSelectedParkingId) {
         Toast.makeText(this, String.format("Save parking %d as favourite", mSelectedParkingId), Toast.LENGTH_SHORT).show();
         favActionButton.setIcon(android.R.drawable.btn_star_big_on);
     }
