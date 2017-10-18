@@ -78,6 +78,21 @@ public final class DBAdapter {
 
     }
 
+
+    public boolean renameFavourite(long id, String newName) {
+        db = mDBHelper.getWritableDatabase();
+        String[] args = {String.valueOf(id)};
+        String whereClause = String.format(" %s =  ?", DBHelper.FAVOURITES_COLUMN_NAMES._id);
+        ContentValues cv = new ContentValues();
+        cv.put(
+                DBHelper.FAVOURITES_COLUMN_NAMES.name.toString(),
+                newName);
+
+        int ret = db.update(DBHelper.FAVOURITES_TABLE_NAME, cv, whereClause, args);
+        return (ret != 0); // 0 means no row affected
+    }
+
+
     public void finalize() {
         if(null != db)
             db.close();

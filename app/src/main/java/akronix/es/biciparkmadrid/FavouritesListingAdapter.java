@@ -18,7 +18,9 @@ public final class FavouritesListingAdapter extends CursorAdapter {
     private static int layout = R.layout.favourite_record;
     private static String[] from = {
             DBHelper.FAVOURITES_COLUMN_NAMES.parking_id.toString(),
-            DBHelper.FAVOURITES_COLUMN_NAMES.name.toString() };
+            DBHelper.FAVOURITES_COLUMN_NAMES.name.toString(),
+            DBHelper.FAVOURITES_COLUMN_NAMES._id.toString(),
+    };
     private Context mContext;
     private ListFavouritesActivity mActivity;
 
@@ -40,12 +42,16 @@ public final class FavouritesListingAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, final Context context, Cursor cursor) {
         TextView tvName = (TextView) view.findViewById(R.id.tvName);
-        tvName.setText(cursor.getString(cursor.getColumnIndex(from[1])));
+        String name = cursor.getString(cursor.getColumnIndex(from[1]));
         final long parkingId = cursor.getLong(cursor.getColumnIndex(from[0]));
+        final long favouritedId = cursor.getLong(cursor.getColumnIndex(from[2]));
+
+        tvName.setText(name);
+        final FavouritedParking parking = new FavouritedParking(favouritedId, parkingId, name);
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                mActivity.showContextActionDialog(parkingId);
+                mActivity.showContextActionDialog(parking);
                 return true;
             }
         });

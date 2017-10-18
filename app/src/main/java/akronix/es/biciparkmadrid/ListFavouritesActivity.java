@@ -1,10 +1,10 @@
 package akronix.es.biciparkmadrid;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.DrawerLayout;
@@ -21,7 +21,9 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ListFavouritesActivity extends AppCompatActivity {
+import static android.R.attr.id;
+
+public class ListFavouritesActivity extends AppCompatActivity implements RenameDialog.RenameDialogCallback{
 
     private DBAdapter mDBAdapter;
     private CursorAdapter cursorAdapter;
@@ -50,8 +52,7 @@ public class ListFavouritesActivity extends AppCompatActivity {
         listView.setAdapter(cursorAdapter);
     }
 
-    public void showContextActionDialog(long id) {
-        final long favouriteId = id;
+    public void showContextActionDialog(final FavouritedParking parking) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String [] contextActions = {
@@ -63,10 +64,10 @@ public class ListFavouritesActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                renameFavourite(favouriteId);
+                                renameFavourite(parking);
                                 break;
                             case 1:
-                                deleteFavourite(favouriteId);
+                                deleteFavourite(parking.getParkingId());
                                 break;
                         }
                     }
@@ -74,13 +75,14 @@ public class ListFavouritesActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    public void renameFavourite(long favouriteId) {
-        Toast.makeText(this, "Renaming " + favouriteId, Toast.LENGTH_SHORT).show();
+    public void renameFavourite(final FavouritedParking parking) {
+        DialogFragment dialog = RenameDialog.newInstance(parking.getId(), parking.getName());
+        dialog.show(getFragmentManager(), "rename_dialog");
     }
 
-    public void deleteFavourite(final long favouriteId) {
+    public void deleteFavourite(final long parkingId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(String.format("Are you sure you want to delete favourite with id: %d?", favouriteId));
+        builder.setMessage(String.format("Are you sure you want to delete favourite with id: %d?", parkingId));
         builder.setTitle("CONFIRM DELETION");
 
         builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -93,12 +95,22 @@ public class ListFavouritesActivity extends AppCompatActivity {
         builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getApplicationContext(), "Deleting " + favouriteId, Toast.LENGTH_SHORT).show();
-                mDBAdapter.deleteByParkingId(favouriteId);
+                Toast.makeText(getApplicationContext(), "Deleting " + parkingId, Toast.LENGTH_SHORT).show();
+                mDBAdapter.deleteByParkingId(parkingId);
                 cursorAdapter.changeCursor(mDBAdapter.getLocalFavouritedParkingsCursor());
             }
         });
 
         builder.create().show();
+    }
+
+    @Override
+    public void doRename(long favouriteId, String newName) {
+        if (this.mDBAdapter.renameFavourite(favouriteId, newName)) {
+            cursorAdapter.changeCursor(mDBAdapter.getLocalFavouritedParkingsCursor());
+            Toast.makeText(this, "Renamed successfully!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Ups...An unexpected error occurred when renaming", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -14,4 +14,9 @@
     <string name="title_activity_list_favourites">Favorite Parkings</string>
     <string name="title_activity_help">Help &amp; Feedback</string>
     <string name="dialog_select_action">Select action</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="rename">rename</string>
+    <string name="cancel">cancel</string>
 </resources>
