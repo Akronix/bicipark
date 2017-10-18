@@ -16,8 +16,7 @@ import android.widget.ListView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ListFavouritesActivity extends AppCompatActivity
-    implements NavigationView.OnNavigationItemSelectedListener {
+public class ListFavouritesActivity extends AppCompatActivity {
 
     private DBAdapter mDBAdapter;
     @BindView(R.id.lvFavourites) ListView listView;
@@ -47,31 +46,5 @@ public class ListFavouritesActivity extends AppCompatActivity
         );
 
         listView.setAdapter(cursorAdapter);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_map) {
-            // Already here, do nothing
-        } else if (id == R.id.nav_favourites) {
-            Intent intent = new Intent(this, ListFavouritesActivity.class);
-            startActivity(intent);
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }

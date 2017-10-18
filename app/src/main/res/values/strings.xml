@@ -10,4 +10,7 @@
     <string name="action_fav">Favourite</string>
     <string name="menu_map">Browse</string>
     <string name="menu_favourites">Favorites</string>
+    <string name="menu_help">Help &amp; Feedback</string>
+    <string name="title_activity_list_favourites">Favorite Parkings</string>
+    <string name="title_activity_help">Help &amp; Feedback</string>
 </resources>
