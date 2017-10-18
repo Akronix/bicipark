@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 public class ListFavouritesActivity extends AppCompatActivity {
 
     private DBAdapter mDBAdapter;
+    private CursorAdapter cursorAdapter;
     @BindView(R.id.lvFavourites) ListView listView;
 
     @Override
@@ -41,7 +42,7 @@ public class ListFavouritesActivity extends AppCompatActivity {
     }
 
     private void populateList() {
-        CursorAdapter cursorAdapter = new FavouritesListingAdapter(
+        cursorAdapter = new FavouritesListingAdapter(
                 this,
                 mDBAdapter.getLocalFavouritedParkingsCursor()
             );
@@ -77,7 +78,27 @@ public class ListFavouritesActivity extends AppCompatActivity {
         Toast.makeText(this, "Renaming " + favouriteId, Toast.LENGTH_SHORT).show();
     }
 
-    public void deleteFavourite(long favouriteId) {
-        Toast.makeText(this, "Deleting " + favouriteId, Toast.LENGTH_SHORT).show();
+    public void deleteFavourite(final long favouriteId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(String.format("Are you sure you want to delete favourite with id: %d?", favouriteId));
+        builder.setTitle("CONFIRM DELETION");
+
+        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(), "Deleting " + favouriteId, Toast.LENGTH_SHORT).show();
+                mDBAdapter.deleteByParkingId(favouriteId);
+                cursorAdapter.changeCursor(mDBAdapter.getLocalFavouritedParkingsCursor());
+            }
+        });
+
+        builder.create().show();
     }
 }

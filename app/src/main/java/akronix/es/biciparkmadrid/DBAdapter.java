@@ -45,7 +45,7 @@ public final class DBAdapter {
         return (ret != -1); // -1 means no row inserted
     }
 
-    public boolean delete (long id) {
+    public boolean deletebyId (long id) {
         db = mDBHelper.getWritableDatabase();
         String[] args = {String.valueOf(id)};
         int ret = db.delete(DBHelper.FAVOURITES_TABLE_NAME, "_id = ?", args);
