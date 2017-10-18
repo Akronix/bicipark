@@ -36,14 +36,10 @@ public class ListFavouritesActivity extends AppCompatActivity {
     }
 
     private void populateList() {
-        SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(
+        CursorAdapter cursorAdapter = new FavouritesListingAdapter(
                 this,
-                android.R.layout.simple_list_item_1,
-                mDBAdapter.getLocalFavouritedParkingsCursor(),
-                new String[]{ "name" },
-                new int[] {android.R.id.text1},
-                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-        );
+                mDBAdapter.getLocalFavouritedParkingsCursor()
+            );
 
         listView.setAdapter(cursorAdapter);
     }

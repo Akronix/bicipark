@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="favourites_context_actions">
+        <item>@string/rename_favourite</item>
+        <item>@string/delete_favourite</item>
+    </string-array>
+    <string name="rename_favourite">Rename favorite</string>
+    <string name="delete_favourite">Remove favorite</string>
+</resources>

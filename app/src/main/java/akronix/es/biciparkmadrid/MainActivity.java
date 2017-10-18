@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity
 
     /*** Other members ***/
     public static final String LOG_TAG = "BICIPARK";
+    //TODO Make it ContentObserver of favourites database
     private Set<Long> mFavourites;
     private long mSelectedParkingId;
     private DBAdapter mDBAdapter;

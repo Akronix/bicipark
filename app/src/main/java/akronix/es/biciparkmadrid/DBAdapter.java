@@ -16,7 +16,7 @@ import java.util.TreeSet;
  * Created by cice on 18/10/17.
  */
 
-final class DBAdapter {
+public final class DBAdapter {
 
     private DBHelper mDBHelper;
     private SQLiteDatabase db;
