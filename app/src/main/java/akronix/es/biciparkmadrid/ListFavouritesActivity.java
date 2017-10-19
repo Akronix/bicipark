@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -82,22 +83,27 @@ public class ListFavouritesActivity extends AppCompatActivity implements RenameD
 
     public void deleteFavourite(final long parkingId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(String.format("Are you sure you want to delete favourite with id: %d?", parkingId));
-        builder.setTitle("CONFIRM DELETION");
+        builder.setMessage(R.string.dialog_delete_favourite_message);
+        builder.setTitle(R.string.dialog_delete_favourite_title);
 
-        builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 return;
             }
         });
 
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(getApplicationContext(), "Deleting " + parkingId, Toast.LENGTH_SHORT).show();
-                mDBAdapter.deleteByParkingId(parkingId);
-                cursorAdapter.changeCursor(mDBAdapter.getLocalFavouritedParkingsCursor());
+                Log.d(MainActivity.LOG_TAG, "Deleting " + parkingId);
+                if (mDBAdapter.deleteByParkingId(parkingId)) {
+                    Toast.makeText(getApplicationContext(), R.string.delete_successful, Toast.LENGTH_SHORT).show();
+                    cursorAdapter.changeCursor(mDBAdapter.getLocalFavouritedParkingsCursor());
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.delete_error, Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -108,9 +114,9 @@ public class ListFavouritesActivity extends AppCompatActivity implements RenameD
     public void doRename(long favouriteId, String newName) {
         if (this.mDBAdapter.renameFavourite(favouriteId, newName)) {
             cursorAdapter.changeCursor(mDBAdapter.getLocalFavouritedParkingsCursor());
-            Toast.makeText(this, "Renamed successfully!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.rename_successful, Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Ups...An unexpected error occurred when renaming", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.rename_error, Toast.LENGTH_SHORT).show();
         }
     }
 }

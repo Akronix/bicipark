@@ -92,7 +92,7 @@ public class RenameDialog extends DialogFragment {
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getActivity(), "Cancelled renaming", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.rename_cancel, Toast.LENGTH_SHORT).show();
                         return;
                     }
                 });

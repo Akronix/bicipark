@@ -15,7 +15,7 @@ import android.view.View;
 
 public class HelpActivity extends AppCompatActivity {
 
-    String phone = "+34915298210"; // Teléfono para Atención al ciudadano de Madrid
+    String phone = "+34915298210"; // Number phone for "Atención al ciudadano de Madrid"
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

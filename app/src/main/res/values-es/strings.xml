@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BiciPark Madrid</string>
+    <string name="action_fav">Favorito</string>
+    <string name="action_settings">Preferencias</string>
+    <string name="cancel">Cancelar</string>
+    <string name="delete_favourite">Borrar favorito</string>
+    <string name="dialog_select_action">Seleccionar acción</string>
+    <string name="intent_share_chooser">Compartir con</string>
+    <string name="menu_favourites">Favoritos</string>
+    <string name="menu_help">Ayuda &amp; Opinión</string>
+    <string name="menu_map">Explorar</string>
+    <string name="menu_settings">Preferencias</string>
+    <string name="message_default_position">No se ha podido detectar tu localización. Posicionando en Puerta del Sol</string>
+    <string name="navigation_drawer_close">Cerrar menu de navegación</string>
+    <string name="navigation_drawer_open">Abrir menu de navegación</string>
+    <string name="rename">Renombrar</string>
+    <string name="rename_favourite">Renombrar favorito</string>
+    <string name="title_activity_banner">BannerActivity</string>
+    <string name="title_activity_browsing">Explorando mapa</string>
+    <string name="title_activity_help">Ayuda &amp; Opinión</string>
+    <string name="title_activity_list_favourites">Parkings favoritos</string>
+    <string name="title_activity_main">Actividad Principal</string>
+    <string name="delete_error">Ups...Borrar el favorito falló</string>
+    <string name="delete_successful">¡Favorito borrado!</string>
+    <string name="dialog_delete_favourite_message">¿Estás seguro que quieres borrar este favorito?</string>
+    <string name="dialog_delete_favourite_title">CONFIRMA BORRADO</string>
+    <string name="rename_cancel">Cancelado renombrado</string>
+    <string name="rename_error">Ups...Renombrar el favorito falló</string>
+    <string name="rename_successful">¡Favorito renombrado!</string>
+    <string name="yes">Sí</string>
+    <string name="help_call_button">Llamar</string>
+    <string name="help_call_text">Llamar para ayuda</string>
+    <string name="menu_share">Compartir mi localización</string>
+    <string name="intent_share_location_subject">Mi localización</string>
+    <string name="intent_share_location_message">Esta es mi localización</string>
+    <string name="unavaible_location_message">No hay ninguna localización para compartir</string>
+</resources>

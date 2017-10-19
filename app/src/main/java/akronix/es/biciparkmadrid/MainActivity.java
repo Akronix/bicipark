@@ -503,8 +503,9 @@ public class MainActivity extends AppCompatActivity
 
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "My Location");
-                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, String.format("This is my location: %s,%s",
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getResources().getString(R.string.intent_share_location_subject));
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, String.format("%s: %s,%s",
+                        getResources().getString(R.string.intent_share_location_message),
                         mLastKnownLocation.getLatitude(),
                         mLastKnownLocation.getLongitude()));
                 startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.intent_share_chooser)));
@@ -518,7 +519,7 @@ public class MainActivity extends AppCompatActivity
                 */
 
             } else {
-                Toast.makeText(this, "Unable to get any location to share", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.unavaible_location_message, Toast.LENGTH_SHORT).show();
             }
 
 
