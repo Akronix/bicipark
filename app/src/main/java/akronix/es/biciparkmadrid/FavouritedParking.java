@@ -1,5 +1,7 @@
 package akronix.es.biciparkmadrid;
 
+import android.net.Uri;
+
 /**
  * Created by akronix on 18/10/17.
  */
@@ -13,6 +15,7 @@ public class FavouritedParking {
     private long id;
     private long parkingId;
     private String name;
+    private Uri imgUri;
 
     public long getParkingId() {
         return parkingId;
@@ -39,4 +42,7 @@ public class FavouritedParking {
                 '}';
     }
 
+    public void setImgUri(Uri imgUri) {
+        this.imgUri = imgUri;
+    }
 }

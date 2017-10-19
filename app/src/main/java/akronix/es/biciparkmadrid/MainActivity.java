@@ -459,7 +459,8 @@ public class MainActivity extends AppCompatActivity
         if (mFavourites.contains(mSelectedParkingId)) {
             if (mDBAdapter.deleteByParkingId(mSelectedParkingId)) {
                 mFavourites.remove(mSelectedParkingId);
-                Toast.makeText(this, String.format("Unmarked parking %d as favourite", mSelectedParkingId), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.action_fav_unmarked_message, Toast.LENGTH_SHORT).show();
+                Log.i(LOG_TAG, String.format("Unmarked parking %d as favourite", mSelectedParkingId));
                 favActionButton.setIcon(android.R.drawable.btn_star_big_off);
             } else {
                 Log.e(LOG_TAG, "Trying to delete parking " + mSelectedParkingId + " from db, but it failed.");
@@ -471,7 +472,8 @@ public class MainActivity extends AppCompatActivity
                     String.valueOf(mSelectedParkingId));
             if (mDBAdapter.insert(parking)) {
                 mFavourites.add(mSelectedParkingId);
-                Toast.makeText(this, String.format("Marked parking %d as favourite", mSelectedParkingId), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.action_fav_marked_message, Toast.LENGTH_SHORT).show();
+                Log.i(LOG_TAG, String.format("Marked parking %d as favourite", mSelectedParkingId));
                 favActionButton.setIcon(android.R.drawable.btn_star_big_on);
             } else {
                 Log.e(LOG_TAG, "Trying to delete parking " + mSelectedParkingId + " from db, but it failed.");

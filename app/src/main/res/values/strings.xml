@@ -44,5 +44,7 @@
     <string name="unavaible_location_message">Unable to get any location to share</string>
     <string name="intent_share_location_subject">My Location</string>
     <string name="intent_share_location_message">This is my location</string>
+    <string name="action_fav_marked_message">Marked parking as favourite</string>
+    <string name="action_fav_unmarked_message">Unmarked parking as favourite</string>
 
 </resources>
