@@ -322,7 +322,8 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
             } else {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mDefaultLocation, DEFAULT_ZOOM));
+                Toast.makeText(MainActivity.this, R.string.message_default_position, Toast.LENGTH_LONG).show();
+                centerCameraOnLocation(mDefaultLocation);
             }
         } catch(SecurityException e)  {
             //Log.e("Exception: %s", e.getMessage());
@@ -492,7 +493,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_banner) {
             Intent intent = new Intent(this, BannerActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_settings) {
+            Toast.makeText(this, "Here settings show be displayed", Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_share) {
             if (mLastKnownLocation != null) {
