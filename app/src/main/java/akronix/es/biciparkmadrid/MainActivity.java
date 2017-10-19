@@ -49,6 +49,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity
         implements OnMapReadyCallback,
@@ -89,6 +91,7 @@ public class MainActivity extends AppCompatActivity
     private Set<Long> mFavourites;
     private long mSelectedParkingId;
     private DBAdapter mDBAdapter;
+    private Uri mSelectedParkingImgUri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +103,7 @@ public class MainActivity extends AppCompatActivity
                 .isGooglePlayServicesAvailable(this);
         switch (resultCode) {
             case ConnectionResult.SUCCESS:
-                Log.d(LOG_TAG, "Google Play Services is ready to go!");
+                Log.i(LOG_TAG, "Google Play Services is ready to go!");
                 break;
             default:
                 showPlayServicesError(resultCode);
@@ -380,6 +383,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onFeatureClick(Feature feature) {
                 mSelectedParkingId = Long.parseLong(feature.getProperty("name"));
+                mSelectedParkingImgUri = parseImgUri(feature.getProperty("description"));
                 showFavButton(mSelectedParkingId);
                 Log.i("KmlClick", "Feature clicked: " + feature.getProperty("name"));
             }
@@ -393,6 +397,18 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+    }
+
+    private Uri parseImgUri(String description) {
+        Log.d(LOG_TAG, description);
+        //Pattern p = Pattern.compile("src=(.*)");
+        Pattern p = Pattern.compile("\\<div");
+        //Pattern p = Pattern.compile("/<img[^>]+src=\"([^\"\\s]+)\"/>/g");
+        Matcher m = p.matcher(description);
+        boolean b = m.matches();
+        if (b) Log.d(LOG_TAG, "img found");
+        else Log.d(LOG_TAG, "img not found");
+        return null;
     }
 
     private void hideFavButton() {
@@ -470,6 +486,7 @@ public class MainActivity extends AppCompatActivity
             FavouritedParking parking = new FavouritedParking(
                     mSelectedParkingId,
                     String.valueOf(mSelectedParkingId));
+            if (mSelectedParkingImgUri != null) parking.setImgUri(mSelectedParkingImgUri);
             if (mDBAdapter.insert(parking)) {
                 mFavourites.add(mSelectedParkingId);
                 Toast.makeText(this, R.string.action_fav_marked_message, Toast.LENGTH_SHORT).show();
