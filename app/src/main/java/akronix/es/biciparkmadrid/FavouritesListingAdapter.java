@@ -1,12 +1,19 @@
 package akronix.es.biciparkmadrid;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.File;
 
 /**
  * Created by akronix on 18/10/17.
@@ -55,6 +62,19 @@ public final class FavouritesListingAdapter extends CursorAdapter {
                 return true;
             }
         });
+        ImageView iv = (ImageView) view.findViewById(R.id.ivCover);
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePhoto(v);
+            }
+        });
     }
+
+    public void takePhoto(View view) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mActivity.startActivityForResult(intent, ListFavouritesActivity.TAKE_PICTURE) ;
+    }
+
 
 }

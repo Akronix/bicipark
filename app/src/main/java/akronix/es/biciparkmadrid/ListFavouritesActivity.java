@@ -1,9 +1,13 @@
 package akronix.es.biciparkmadrid;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.CursorAdapter;
@@ -16,6 +20,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,6 +31,7 @@ import static android.R.attr.id;
 
 public class ListFavouritesActivity extends AppCompatActivity implements RenameDialog.RenameDialogCallback{
 
+    public static final int TAKE_PICTURE = 1;
     private DBAdapter mDBAdapter;
     private CursorAdapter cursorAdapter;
     @BindView(R.id.lvFavourites) ListView listView;
@@ -119,4 +125,18 @@ public class ListFavouritesActivity extends AppCompatActivity implements RenameD
             Toast.makeText(this, R.string.rename_error, Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case TAKE_PICTURE:
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri selectedImage = Uri.parse(data.toUri(0));
+                    ImageView ivCover = (ImageView) findViewById(R.id.ivCover);
+                    ivCover.setImageURI(selectedImage);
+                }
+        }
+    }
+
 }
