@@ -15,7 +15,7 @@ final class DBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     public enum FAVOURITES_COLUMN_NAMES {
-        _id, parking_id, name;
+        _id, parking_id, name, img_uri;
     }
 
     public DBHelper(Context context) {
@@ -40,11 +40,15 @@ final class DBHelper extends SQLiteOpenHelper {
         String stmt = String.format("CREATE TABLE %s" +
                         "(%s INTEGER PRIMARY KEY ASC," +
                         " %s INTEGER NOT NULL UNIQUE," +
-                        " %s TEXT NOT NULL)",
+                        " %s TEXT NOT NULL," +
+                        " %s TEXT" +
+                        ")",
                 FAVOURITES_TABLE_NAME,
                 FAVOURITES_COLUMN_NAMES._id,
                 FAVOURITES_COLUMN_NAMES.parking_id,
-                FAVOURITES_COLUMN_NAMES.name);
+                FAVOURITES_COLUMN_NAMES.name,
+                FAVOURITES_COLUMN_NAMES.img_uri
+                );
         db.execSQL(stmt);
     }
 
