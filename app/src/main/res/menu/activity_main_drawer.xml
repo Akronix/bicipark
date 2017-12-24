@@ -11,10 +11,6 @@
             android:icon="@android:drawable/star_big_on"
             android:title="@string/menu_favourites" />
         <item
-            android:id="@+id/nav_banner"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Banner" />
-        <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_menu_share"
             android:title="@string/menu_share"/>

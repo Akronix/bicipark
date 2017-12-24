@@ -509,9 +509,6 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_favourites) {
             Intent intent = new Intent(this, ListFavouritesActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_banner) {
-            Intent intent = new Intent(this, BannerActivity.class);
-            startActivity(intent);
         } else if (id == R.id.nav_settings) {
             Toast.makeText(this, "Here settings show be displayed", Toast.LENGTH_SHORT).show();
 
