@@ -15,7 +15,9 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.util.SortedList;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -37,6 +39,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -93,6 +96,8 @@ public class MainActivity extends AppCompatActivity
     private DBAdapter mDBAdapter;
     private Uri mSelectedParkingImgUri = null;
 
+    DisplayMetrics displayMetrics = new DisplayMetrics();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,20 +115,22 @@ public class MainActivity extends AppCompatActivity
                 return;
         }
 
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+
         initLocationRequest();
         initLocationCallback();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_directMe);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_directMe);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -185,7 +192,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startLocationUpdates() {
-        //getLocationPermission();
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             //    ActivityCompat#requestPermissions
@@ -210,9 +216,6 @@ public class MainActivity extends AppCompatActivity
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
                     mLastKnownLocation = location;
-                    centerCameraOnLocation(new LatLng(mLastKnownLocation.getLatitude(),
-                            mLastKnownLocation.getLongitude()));
-                    updateLocationUI();
                 }
             }
 
@@ -287,15 +290,12 @@ public class MainActivity extends AppCompatActivity
             if (mLocationPermissionGranted) {
                 Log.i(LOG_TAG, "Enabling location button");
                 mMap.setMyLocationEnabled(true);
-                mMap.getUiSettings().setMyLocationButtonEnabled(true);
             } else {
                 Log.i(LOG_TAG, "Disabling location button");
                 mMap.setMyLocationEnabled(false);
-                //mMap.getUiSettings().setMyLocationButtonEnabled(false);
             }
         } catch (SecurityException e)  {
             Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
-            //Log.e("Exception: %s", e.getMessage());
         }
     }
 
@@ -320,7 +320,6 @@ public class MainActivity extends AppCompatActivity
                             Log.d(LOG_TAG, "Current location is null. Using defaults.");
                             //Log.e(LOG_TAG, String.format("Exception: %s", task.getException()));
                             centerCameraOnLocation(mDefaultLocation);
-                            //mMap.getUiSettings().setMyLocationButtonEnabled(false);
                         }
                     }
                 });
@@ -329,7 +328,6 @@ public class MainActivity extends AppCompatActivity
                 centerCameraOnLocation(mDefaultLocation);
             }
         } catch(SecurityException e)  {
-            //Log.e("Exception: %s", e.getMessage());
             Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
         }
     }
@@ -343,8 +341,6 @@ public class MainActivity extends AppCompatActivity
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -353,21 +349,24 @@ public class MainActivity extends AppCompatActivity
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Prompt the user for permission.
-        getLocationPermission();
+        // Set padding to map controls like my-location button or map toolbar
+        int topPaddingInDp = 60;
+        /* dp => px; */
+        int topPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, topPaddingInDp, displayMetrics);
+        mMap.setPadding(0, topPadding, 0, 0);
 
-        // Turn on the My Location layer and the related control on the map.
-        //updateLocationUI();
+        // Enable get directions and show in gMaps toolbar (when a marker is pressed) */
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+
+        // Prompt user for permission.
+        getLocationPermission();
 
         // Get the current location of the device and set the position of the map.
         //getDeviceLocation();
         mRequestingLocationUpdates = true;
         startLocationUpdates();
 
-        if (!mMap.isMyLocationEnabled()) {
-            Log.d(LOG_TAG, "Location layer is disabled :(");
-        }
-
+        // Add parking points to map
         try {
             mKmlLayer = new KmlLayer(mMap, R.raw.upstream, getApplicationContext());
             mKmlLayer.addLayerToMap();
