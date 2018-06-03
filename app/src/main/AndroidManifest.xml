@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="akronix.es.biciparkmadrid">
+    package="akronix.es.biciparkmadrid"
+    android:versionCode="1"
+    android:versionName="0.0.1"
+    >
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
