@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/main_app_menu" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_map"
             android:icon="@android:drawable/ic_dialog_map"
@@ -17,9 +17,7 @@
 
     </group>
 
-    <item android:title="Other">
-        <menu>
-
+    <group android:id="@+id/others_app_menu" android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_settings"
                 android:icon="@drawable/ic_menu_manage"
@@ -29,7 +27,6 @@
                 android:id="@+id/nav_help"
                 android:icon="@android:drawable/ic_menu_help"
                 android:title="@string/menu_help" />
-        </menu>
-    </item>
+    </group>
 
 </menu>
