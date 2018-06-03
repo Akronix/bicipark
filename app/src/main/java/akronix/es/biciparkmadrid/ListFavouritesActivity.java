@@ -102,7 +102,7 @@ public class ListFavouritesActivity extends AppCompatActivity implements RenameD
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Log.d(MainActivity.LOG_TAG, "Deleting " + parkingId);
+                ;// Log.d(MainActivity.LOG_TAG, "Deleting " + parkingId);
                 if (mDBAdapter.deleteByParkingId(parkingId)) {
                     Toast.makeText(getApplicationContext(), R.string.delete_successful, Toast.LENGTH_SHORT).show();
                     cursorAdapter.changeCursor(mDBAdapter.getLocalFavouritedParkingsCursor());

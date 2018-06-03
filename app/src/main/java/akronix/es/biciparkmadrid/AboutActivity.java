@@ -21,7 +21,7 @@ public class AboutActivity extends AppCompatActivity {
 //        try {
 //            startActivity(callIntent);
 //        } catch (Exception e) {
-//            Log.e(MainActivity.LOG_TAG, "Failed to invoke call", e);
+//            ;// Log.e(MainActivity.LOG_TAG, "Failed to invoke call", e);
 //        }
 //    }
 

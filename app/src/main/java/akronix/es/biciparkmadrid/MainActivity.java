@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity
                 .isGooglePlayServicesAvailable(this);
         switch (resultCode) {
             case ConnectionResult.SUCCESS:
-                Log.i(LOG_TAG, "Google Play Services is ready to go!");
+                ;// Log.i(LOG_TAG, "Google Play Services is ready to go!");
                 break;
             default:
                 showPlayServicesError(resultCode);
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity
             public void onChange(boolean selfChange, Uri uri) {
                 mFavourites = mDBAdapter.getLocalFavouritedParkingsIds();
                 for (long id : mFavourites)
-                    Log.d(LOG_TAG, id + ", ");
+                    ;// Log.d(LOG_TAG, id + ", ");
             }
         });
     }
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity
         }
         mFavourites = mDBAdapter.getLocalFavouritedParkingsIds();
         for (long id : mFavourites)
-            Log.d(LOG_TAG, id + ", ");
+            ;// Log.d(LOG_TAG, id + ", ");
     }
 
     @Override
@@ -277,19 +277,19 @@ public class MainActivity extends AppCompatActivity
 
     private void updateLocationUI() {
         if (mMap == null) {
-            Log.d(LOG_TAG, "GMap is null :O");
+            ;// Log.d(LOG_TAG, "GMap is null :O");
             return;
         }
         try {
             if (mLocationPermissionGranted) {
-                Log.i(LOG_TAG, "Enabling location button");
+                ;// Log.i(LOG_TAG, "Enabling location button");
                 mMap.setMyLocationEnabled(true);
             } else {
-                Log.i(LOG_TAG, "Disabling location button");
+                ;// Log.i(LOG_TAG, "Disabling location button");
                 mMap.setMyLocationEnabled(false);
             }
         } catch (SecurityException e)  {
-            Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
+            ;// Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
         }
     }
 
@@ -311,8 +311,8 @@ public class MainActivity extends AppCompatActivity
                             centerCameraOnLocation(new LatLng(mLastKnownLocation.getLatitude(),
                                     mLastKnownLocation.getLongitude()));
                         } else {
-                            Log.d(LOG_TAG, "Current location is null. Using defaults.");
-                            //Log.e(LOG_TAG, String.format("Exception: %s", task.getException()));
+                            ;// Log.d(LOG_TAG, "Current location is null. Using defaults.");
+                            //;// Log.e(LOG_TAG, String.format("Exception: %s", task.getException()));
                             centerCameraOnLocation(mDefaultLocation);
                         }
                     }
@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity
                 centerCameraOnLocation(mDefaultLocation);
             }
         } catch(SecurityException e)  {
-            Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
+            ;// Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
         }
     }
 
@@ -378,7 +378,7 @@ public class MainActivity extends AppCompatActivity
                 mSelectedParkingId = Long.parseLong(feature.getProperty("name"));
                 mSelectedParkingImgUri = parseImgUri(feature.getProperty("description"));
                 showFavButton(mSelectedParkingId);
-                Log.i("KmlClick", "Feature clicked: " + feature.getProperty("name"));
+                ;// Log.i("KmlClick", "Feature clicked: " + feature.getProperty("name"));
             }
         });
 
@@ -393,14 +393,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private Uri parseImgUri(String description) {
-        Log.d(LOG_TAG, description);
+        ;// Log.d(LOG_TAG, description);
         //Pattern p = Pattern.compile("src=(.*)");
         Pattern p = Pattern.compile("\\<div");
         //Pattern p = Pattern.compile("/<img[^>]+src=\"([^\"\\s]+)\"/>/g");
         Matcher m = p.matcher(description);
         boolean b = m.matches();
-        if (b) Log.d(LOG_TAG, "img found");
-        else Log.d(LOG_TAG, "img not found");
+        if (b) ;// Log.d(LOG_TAG, "img found");
+        else ;// Log.d(LOG_TAG, "img not found");
         return null;
     }
 
@@ -469,10 +469,10 @@ public class MainActivity extends AppCompatActivity
             if (mDBAdapter.deleteByParkingId(mSelectedParkingId)) {
                 mFavourites.remove(mSelectedParkingId);
                 Toast.makeText(this, R.string.action_fav_unmarked_message, Toast.LENGTH_SHORT).show();
-                Log.i(LOG_TAG, String.format("Unmarked parking %d as favourite", mSelectedParkingId));
+                ;// Log.i(LOG_TAG, String.format("Unmarked parking %d as favourite", mSelectedParkingId));
                 favActionButton.setIcon(android.R.drawable.btn_star_big_off);
             } else {
-                Log.e(LOG_TAG, "Trying to delete parking " + mSelectedParkingId + " from db, but it failed.");
+                ;// Log.e(LOG_TAG, "Trying to delete parking " + mSelectedParkingId + " from db, but it failed.");
             }
 
         } else {
@@ -483,10 +483,10 @@ public class MainActivity extends AppCompatActivity
             if (mDBAdapter.insert(parking)) {
                 mFavourites.add(mSelectedParkingId);
                 Toast.makeText(this, R.string.action_fav_marked_message, Toast.LENGTH_SHORT).show();
-                Log.i(LOG_TAG, String.format("Marked parking %d as favourite", mSelectedParkingId));
+                ;// Log.i(LOG_TAG, String.format("Marked parking %d as favourite", mSelectedParkingId));
                 favActionButton.setIcon(android.R.drawable.btn_star_big_on);
             } else {
-                Log.e(LOG_TAG, "Trying to delete parking " + mSelectedParkingId + " from db, but it failed.");
+                ;// Log.e(LOG_TAG, "Trying to delete parking " + mSelectedParkingId + " from db, but it failed.");
             }
         }
     }
@@ -508,7 +508,7 @@ public class MainActivity extends AppCompatActivity
             */
         } else if (id == R.id.nav_share) {
             if (mLastKnownLocation != null) {
-                Log.i(LOG_TAG, "Location " + mLastKnownLocation.toString());
+                ;// Log.i(LOG_TAG, "Location " + mLastKnownLocation.toString());
 
 
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
