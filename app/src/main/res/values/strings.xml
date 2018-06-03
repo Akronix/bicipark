@@ -4,7 +4,7 @@
     <string name="title_activity_main">Main Activity</string>
 
     <string name="title_activity_list_favourites">Favorite Parkings</string>
-    <string name="title_activity_help">Help &amp; Feedback</string>
+    <string name="title_activity_about">About &amp; Feedback</string>
 
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -16,7 +16,7 @@
     <string name="menu_map">Browse</string>
     <string name="menu_favourites">Favorites</string>
     <string name="menu_settings">Settings</string>
-    <string name="menu_help">Help &amp; Feedback</string>
+    <string name="menu_about">About &amp; Feedback</string>
 
     <!-- Dialogs: -->
     <string name="dialog_select_action">Select action</string>
@@ -39,12 +39,30 @@
     <string name="delete_error">Ups...Removing favourite failed</string>
     <string name="rename_cancel">Renaming cancelled</string>
     <string name="menu_share">Share my location</string>
-    <string name="help_call_text">Call for help</string>
-    <string name="help_call_button">Call</string>
+
     <string name="unavaible_location_message">Unable to get any location to share</string>
     <string name="intent_share_location_subject">My Location</string>
     <string name="intent_share_location_message">This is my location</string>
     <string name="action_fav_marked_message">Marked parking as favourite</string>
     <string name="action_fav_unmarked_message">Unmarked parking as favourite</string>
+
+    <!-- About activity -->
+    <string name="help_and_feedback_paragraph">
+        BiciPark is a mobile app that helps you find a public parking for your bike in
+ Madrid city (Spain).\n\n
+
+
+        This app has been developed by Abel Serrano Juste as a gift to all the cyclists in Madrid.
+I hope you find it useful next time you are looking for a parking for your bike, as I do 😁.\n\n
+
+
+        I\'m looking forward to get feedback from you. If you have any suggestions or comments,
+        please mail to: akronix5@gmail.com\n\n
+
+
+        BiciPark is free software as in <i>\'free speech\'</i>. You can find the source code and bugtracker
+ here: https://github.com/Akronix/bicipark
+    </string>
+
 
 </resources>

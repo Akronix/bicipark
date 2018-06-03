@@ -10,15 +10,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.util.SortedList;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -39,7 +35,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -50,7 +45,6 @@ import com.google.maps.android.data.kml.KmlLayer;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -508,9 +502,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_favourites) {
             Intent intent = new Intent(this, ListFavouritesActivity.class);
             startActivity(intent);
+            /*
         } else if (id == R.id.nav_settings) {
             Toast.makeText(this, "Here settings show be displayed", Toast.LENGTH_SHORT).show();
-
+            */
         } else if (id == R.id.nav_share) {
             if (mLastKnownLocation != null) {
                 Log.i(LOG_TAG, "Location " + mLastKnownLocation.toString());
@@ -539,7 +534,7 @@ public class MainActivity extends AppCompatActivity
 
 
         } else if (id == R.id.nav_help) {
-            Intent intent = new Intent(this, HelpActivity.class);
+            Intent intent = new Intent(this, AboutActivity.class);
             startActivity(intent);
         }
 

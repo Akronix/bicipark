@@ -8,7 +8,6 @@
     <string name="dialog_select_action">Seleccionar acción</string>
     <string name="intent_share_chooser">Compartir con</string>
     <string name="menu_favourites">Favoritos</string>
-    <string name="menu_help">Ayuda &amp; Opinión</string>
     <string name="menu_map">Explorar</string>
     <string name="menu_settings">Preferencias</string>
     <string name="message_default_position">No se ha podido detectar tu localización. Posicionando en Puerta del Sol</string>
@@ -18,7 +17,7 @@
     <string name="rename_favourite">Renombrar favorito</string>
     <string name="title_activity_banner">BannerActivity</string>
     <string name="title_activity_browsing">Explorando mapa</string>
-    <string name="title_activity_help">Ayuda &amp; Opinión</string>
+    <string name="title_activity_about">Acerca de &amp; Opinión</string>
     <string name="title_activity_list_favourites">Parkings favoritos</string>
     <string name="title_activity_main">Actividad Principal</string>
     <string name="delete_error">Ups...Borrar el favorito falló</string>
@@ -35,4 +34,26 @@
     <string name="intent_share_location_subject">Mi localización</string>
     <string name="intent_share_location_message">Esta es mi localización</string>
     <string name="unavaible_location_message">No hay ninguna localización para compartir</string>
+    <string name="menu_about">Acerca de &amp; Opinión</string>
+
+
+    <!-- About activity -->
+    <string name="help_and_feedback_paragraph">
+        BiciPark es una app para móviles que te ayuda a encontrar un aparcamiento público en la
+ ciudad de Madrid (España).\n\n
+
+
+        Esta app ha sido desarrollada por Abel Serrano Juste como un regalo para todos los ciclistas
+ de Madrid. Espero que, como yo, la encuentres útil la próxima vez que estés buscando un aparcamiento
+ para tu bici 😁.\n\n
+
+
+        Estoy interesado en recibir feedback. Si tienes cualquier sugerencia o comentario, por favor
+ escríbeme a: akronix5@gmail.com\n\n
+
+
+        BiciPark es software libre. Puedes encontrar el código fuente y el seguimiento de errores
+ aquí: https://github.com/Akronix/bicipark
+    </string>
+
 </resources>
