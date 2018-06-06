@@ -28,14 +28,16 @@
     <string name="rename_error">Ups...Renombrar el favorito falló</string>
     <string name="rename_successful">¡Favorito renombrado!</string>
     <string name="yes">Sí</string>
-    <string name="help_call_button">Llamar</string>
-    <string name="help_call_text">Llamar para ayuda</string>
     <string name="menu_share">Compartir mi localización</string>
     <string name="intent_share_location_subject">Mi localización</string>
     <string name="intent_share_location_message">Esta es mi localización</string>
     <string name="unavaible_location_message">No hay ninguna localización para compartir</string>
     <string name="menu_about">Acerca de &amp; Opinión</string>
 
+
+    <!-- favourite -->
+    <string name="action_fav_marked_message">Parking marcado como favorito</string>
+    <string name="action_fav_unmarked_message">Parking desmarcado como favorito</string>
 
     <!-- About activity -->
     <string name="help_and_feedback_paragraph">

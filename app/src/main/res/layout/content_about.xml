@@ -12,11 +12,13 @@
         android:id="@+id/about_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="77dp"
         android:autoLink="web|email"
         android:padding="30dp"
         android:text="@string/help_and_feedback_paragraph"
-        tools:layout_constraintBaseline_creator="1"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="77dp" />
+        android:autoSizeTextType="uniform"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintBaseline_creator="1" />
 
 </android.support.constraint.ConstraintLayout>
