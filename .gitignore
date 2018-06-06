@@ -1,6 +1,8 @@
 # Custom
 google_maps_api.xml
 .DS_Store
+keystore.properties
+app/release/
 
 # Built application files
 *.apk
