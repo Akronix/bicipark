@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private KmlLayer mKmlLayer;
 
     /*** View members ***/
-    MenuItem favActionButton;
+    private MenuItem favActionButton;
 
 
     /*** Location members: ***/

@@ -33,10 +33,10 @@
     <string name="dialog_delete_favourite_message">Are you sure you want to remove favourite?</string>
 
     <string name="rename_successful">Favourite renamed successfully!</string>
-    <string name="rename_error">Ups...Renaming favourite failed</string>
+    <string name="rename_error">Ups…Renaming favourite failed</string>
 
     <string name="delete_successful">Favourite removed successfully!</string>
-    <string name="delete_error">Ups...Removing favourite failed</string>
+    <string name="delete_error">Ups…Removing favourite failed</string>
     <string name="rename_cancel">Renaming cancelled</string>
     <string name="menu_share">Share my location</string>
 
