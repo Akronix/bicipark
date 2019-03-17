@@ -1,6 +1,7 @@
 package akronix.es.biciparkmadrid;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +10,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -23,6 +25,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -42,6 +46,12 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.maps.android.data.Feature;
 import com.google.maps.android.data.kml.KmlLayer;
 
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.ScaleBarOverlay;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -49,13 +59,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.views.MapView;
+
 public class MainActivity extends AppCompatActivity
-        implements OnMapReadyCallback,
-        NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     /*** Main members ***/
-    private GoogleMap mMap;
-    private KmlLayer mKmlLayer;
+    private MapView mMap;
+    //private KmlLayer mKmlLayer;
 
     /*** View members ***/
     MenuItem favActionButton;
@@ -71,7 +83,7 @@ public class MainActivity extends AppCompatActivity
     private FusedLocationProviderClient mFusedLocationProviderClient;
     // A default location (Puerta del Sol, Madrid, Spain) and default zoom to use when location permission is
     // not granted.
-    private final LatLng mDefaultLocation = new LatLng(40.416932, -3.703317);
+    private final GeoPoint mDefaultLocation = new GeoPoint(40.416932, -3.703317);
     private static final int DEFAULT_ZOOM = 17;
     private boolean mRequestingLocationUpdates = false;
 
@@ -81,6 +93,7 @@ public class MainActivity extends AppCompatActivity
     /* Metadata about updates we want to receive */
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
+    private MyLocationNewOverlay mLocationOverlay;
 
 
     /*** Other members ***/
@@ -91,10 +104,21 @@ public class MainActivity extends AppCompatActivity
     private Uri mSelectedParkingImgUri = null;
 
     DisplayMetrics displayMetrics = new DisplayMetrics();
+    private ScaleBarOverlay mScaleBarOverlay;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Construct a FusedLocationProviderClient.
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        Log.i(LOG_TAG, "Fused location object " + mFusedLocationProviderClient.toString());
+
+        //load/initialize the osmdroid configuration, this can be done
+        Context ctx = getApplicationContext();
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+
         setContentView(R.layout.activity_main);
 
         //Verify play services is active and up to date
@@ -135,13 +159,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        // Construct a FusedLocationProviderClient.
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        mMap = (MapView) findViewById(R.id.map);
+        onMapReady();
 
         mDBAdapter = new DBAdapter(this);
         initFavouritesCollection();
@@ -168,7 +187,8 @@ public class MainActivity extends AppCompatActivity
         }
         mFavourites = mDBAdapter.getLocalFavouritedParkingsIds();
         for (long id : mFavourites)
-            ;// Log.d(LOG_TAG, id + ", ");
+            Log.d(LOG_TAG, id + ", ");
+        mMap.onResume();
     }
 
     @Override
@@ -177,6 +197,7 @@ public class MainActivity extends AppCompatActivity
         //Disable updates when we are not in the foreground
         if (mRequestingLocationUpdates)
             stopLocationUpdates();
+        mMap.onPause();
     }
 
     @Override
@@ -277,19 +298,22 @@ public class MainActivity extends AppCompatActivity
 
     private void updateLocationUI() {
         if (mMap == null) {
-            ;// Log.d(LOG_TAG, "GMap is null :O");
+            Log.d(LOG_TAG, "mMap is null :O");
             return;
         }
         try {
             if (mLocationPermissionGranted) {
-                ;// Log.i(LOG_TAG, "Enabling location button");
-                mMap.setMyLocationEnabled(true);
+                Log.i(LOG_TAG, "Enabling location button");
+                this.mLocationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(this.getApplicationContext()), mMap);
+                this.mLocationOverlay.enableMyLocation();
+                mMap.getOverlays().add(this.mLocationOverlay);
+                mLocationOverlay.enableFollowLocation();
             } else {
-                ;// Log.i(LOG_TAG, "Disabling location button");
-                mMap.setMyLocationEnabled(false);
+                Log.i(LOG_TAG, "Disabling location button");
+               //mMap.setMyLocationEnabled(false);
             }
         } catch (SecurityException e)  {
-            ;// Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
+            Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
         }
     }
 
@@ -300,19 +324,23 @@ public class MainActivity extends AppCompatActivity
      * cases when a location is not available.
      */
         try {
-            if (mLocationPermissionGranted) {
+            if (mLocationPermissionGranted && mFusedLocationProviderClient != null) {
+                Log.i(LOG_TAG, "getDeviceLocation(): Fused location object " + mFusedLocationProviderClient.toString());
                 Task locationResult = mFusedLocationProviderClient.getLastLocation();
                 locationResult.addOnCompleteListener(this, new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful() && task.getResult() != null) {
+                            Log.i(LOG_TAG, "Changing Location...");
                             // Set the map's camera position to the current location of the device.
+
                             mLastKnownLocation = (Location) task.getResult();
-                            centerCameraOnLocation(new LatLng(mLastKnownLocation.getLatitude(),
+                            centerCameraOnLocation(new GeoPoint(mLastKnownLocation.getLatitude(),
                                     mLastKnownLocation.getLongitude()));
+
+                            centerCameraOnLocation(mDefaultLocation);
                         } else {
-                            ;// Log.d(LOG_TAG, "Current location is null. Using defaults.");
-                            //;// Log.e(LOG_TAG, String.format("Exception: %s", task.getException()));
+                            Log.d(LOG_TAG, "Current location is null. Using defaults.");
                             centerCameraOnLocation(mDefaultLocation);
                         }
                     }
@@ -322,46 +350,78 @@ public class MainActivity extends AppCompatActivity
                 centerCameraOnLocation(mDefaultLocation);
             }
         } catch(SecurityException e)  {
-            ;// Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
+            Log.e(LOG_TAG, String.format("Exception: %s", e.getMessage()));
         }
     }
 
 
-    private void centerCameraOnLocation(LatLng location) {
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, DEFAULT_ZOOM));
+    private void centerCameraOnLocation(GeoPoint position) {
+        IMapController mapController = mMap.getController();
+        mapController.setZoom(DEFAULT_ZOOM);
+        mapController.animateTo(position);
+        //mapController.setCenter(position);
+    }
+
+
+    private void setLocateMeButton(boolean set) {
+        if (set) { //TOCHANGE: should add to overlay / remove depending on location permissions
+            ImageButton btLocateMe = (ImageButton) findViewById(R.id.ic_locate_me);
+
+            btLocateMe.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i(LOG_TAG, "locate me button clicked ");
+                    getDeviceLocation();
+                }
+            });
+        }
     }
 
 
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
      */
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+    public void onMapReady() {
+
+        mMap.setTileSource(TileSourceFactory.MAPNIK);
+
+        // set UI controls
+        mMap.setBuiltInZoomControls(true);
+        mMap.setMultiTouchControls(true);
+        setLocateMeButton(true);
+
+        // Add scalebar
+        final Context context = getApplicationContext();
+        final DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        mScaleBarOverlay = new ScaleBarOverlay(mMap);
+        mScaleBarOverlay.setCentred(true);
+//play around with these values to get the location on screen in the right place for your application
+        mScaleBarOverlay.setScaleBarOffset(dm.widthPixels / 2, 200);
+        mMap.getOverlays().add(mScaleBarOverlay);
+
 
         // Set padding to map controls like my-location button or map toolbar
-        int topPaddingInDp = 60;
+        //int topPaddingInDp = 60;
         /* dp => px; */
-        int topPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, topPaddingInDp, displayMetrics);
-        mMap.setPadding(0, topPadding, 0, 0);
+        //int topPadding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, topPaddingInDp, displayMetrics);
+        //mMap.setPadding(0, topPadding, 0, 0);
 
-        // Enable get directions and show in gMaps toolbar (when a marker is pressed) */
-        mMap.getUiSettings().setMapToolbarEnabled(true);
+          // TOFIX
+//        // Enable get directions and show in gMaps toolbar (when a marker is pressed) */
+//        mMap.getUiSettings().setMapToolbarEnabled(true);
 
         // Prompt user for permission.
         getLocationPermission();
 
         // Get the current location of the device and set the position of the map.
-        //getDeviceLocation();
+        getDeviceLocation();
         mRequestingLocationUpdates = true;
         startLocationUpdates();
 
         // Add parking points to map
-        try {
+        //TOFIX
+      /*  try {
             mKmlLayer = new KmlLayer(mMap, R.raw.upstream, getApplicationContext());
             mKmlLayer.addLayerToMap();
         } catch (XmlPullParserException e) {
@@ -388,7 +448,7 @@ public class MainActivity extends AppCompatActivity
                 mSelectedParkingId = 0;
                 hideFavButton();
             }
-        });
+        });*/
 
     }
 
