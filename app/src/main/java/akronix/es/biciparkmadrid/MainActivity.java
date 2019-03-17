@@ -150,7 +150,15 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mMap = (MapView) findViewById(R.id.map);
-        onMapReady();
+        mMap.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        onMapReady();
+                    }
+                }
+        );
+
 
         mDBAdapter = new DBAdapter(this);
         initFavouritesCollection();
